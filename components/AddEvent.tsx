@@ -25,7 +25,7 @@ export default function AddEvent() {
   const createEventMutation = useMutation({
     mutationFn: eventService.create,
     onSuccess: (res) => {
-      queryClient.invalidateQueries({ queryKey: ['events'] });
+      queryClient.refetchQueries({ queryKey: ['events'] });
       setEventName('');
       setModalVisible(false);
       router.push(`/events/${res.id}`);
@@ -74,7 +74,7 @@ export default function AddEvent() {
                 placeholderTextColor="#9CA3AF"
                 autoFocus
               />
-              <View className="flex-row justify-end gap-2">
+              <View className="flex-row justify-center gap-2">
                 <Button onPress={() => setModalVisible(false)} className="border bg-white px-8">
                   <Text className="text-black">Cancel</Text>
                 </Button>
