@@ -1,4 +1,5 @@
 import { AntDesign } from '@expo/vector-icons';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import {
   View,
@@ -8,19 +9,34 @@ import {
   Pressable,
   KeyboardAvoidingView,
   Platform,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
 
 import { Button } from '~/components/Button';
+import eventService from '~/services/event.service';
 
 export default function AddEvent() {
   const [modalVisible, setModalVisible] = useState(false);
   const [eventName, setEventName] = useState('');
+  const queryClient = useQueryClient();
+
+  const createEventMutation = useMutation({
+    mutationFn: eventService.create,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['events'] });
+      setEventName('');
+      setModalVisible(false);
+    },
+    onError: (error) => {
+      console.error('Error creating event:', error);
+      Alert.alert('Error', 'Failed to create event. Please try again.');
+    },
+  });
 
   const handleAddEvent = () => {
     if (eventName.trim()) {
-      console.log('Event added:', eventName);
-      setEventName('');
-      setModalVisible(false);
+      createEventMutation.mutate({ name: eventName.trim() });
     }
   };
 
@@ -49,22 +65,33 @@ export default function AddEvent() {
               onTouchEnd={(e) => e.stopPropagation()}>
               <Text className="mb-6 text-left text-3xl font-bold">Create Event</Text>
               <TextInput
-                className="mb-4 h-14 w-64 rounded border border-gray-300 px-3 text-xl text-black"
+                className="mb-4 h-14 w-72 rounded border border-gray-300 px-3 text-xl text-black"
                 onChangeText={setEventName}
                 value={eventName}
                 placeholder="Enter event name"
                 placeholderTextColor="#9CA3AF"
                 autoFocus
               />
-              <View className="flex-row gap-2">
+              <View className="flex-row justify-end gap-2">
                 <Button
                   onPress={() => setModalVisible(false)}
                   className="border bg-white px-8"
                   textClassName="text-black text-md">
                   Cancel
                 </Button>
-                <Button onPress={handleAddEvent} className="px-8" textClassName="text-md">
-                  Create
+                <Button
+                  onPress={handleAddEvent}
+                  className="px-8"
+                  textClassName="text-md"
+                  disabled={createEventMutation.isPending}>
+                  {createEventMutation.isPending ? (
+                    <View className="flex-row items-center">
+                      <ActivityIndicator size="small" color="white" />
+                      <Text className="text-md ml-2 text-white">Creating...</Text>
+                    </View>
+                  ) : (
+                    'Create'
+                  )}
                 </Button>
               </View>
             </View>
