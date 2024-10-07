@@ -1,5 +1,6 @@
 import { AntDesign } from '@expo/vector-icons';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
   View,
@@ -23,10 +24,11 @@ export default function AddEvent() {
 
   const createEventMutation = useMutation({
     mutationFn: eventService.create,
-    onSuccess: () => {
+    onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ['events'] });
       setEventName('');
       setModalVisible(false);
+      router.push(`/events/${res.id}`);
     },
     onError: (error) => {
       console.error('Error creating event:', error);
@@ -73,11 +75,8 @@ export default function AddEvent() {
                 autoFocus
               />
               <View className="flex-row justify-end gap-2">
-                <Button
-                  onPress={() => setModalVisible(false)}
-                  className="border bg-white px-8"
-                  textClassName="text-black text-md">
-                  Cancel
+                <Button onPress={() => setModalVisible(false)} className="border bg-white px-8">
+                  <Text className="text-black">Cancel</Text>
                 </Button>
                 <Button
                   onPress={handleAddEvent}

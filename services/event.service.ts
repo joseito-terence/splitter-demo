@@ -11,6 +11,11 @@ const eventService = {
     return response.data;
   },
 
+  getOne: async (id: string) => {
+    const response = await axios.get<Event>(`/events/${id}`);
+    return response.data;
+  },
+
   create: async (event: Omit<Event, 'id'>) => {
     const response = await axios.post<Event>('/events', event);
     return response.data;
