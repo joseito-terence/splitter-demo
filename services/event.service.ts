@@ -1,7 +1,7 @@
 import axios from './axios';
 
 interface Event {
-  id?: number;
+  id?: string;
   name: string;
 }
 
@@ -21,12 +21,12 @@ const eventService = {
     return response.data;
   },
 
-  update: async (id: number, event: Partial<Event>) => {
+  update: async (id: string, event: Partial<Event>) => {
     const response = await axios.put<Event>(`/events/${id}`, event);
     return response.data;
   },
 
-  delete: async (id: number) => {
+  delete: async (id: string) => {
     await axios.delete(`/events/${id}`);
   },
 };

@@ -3,7 +3,7 @@ import React from 'react';
 import { Text, Pressable } from 'react-native';
 
 interface EventCardProps {
-  id: number;
+  id: string;
   name: string;
 }
 
