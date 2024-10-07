@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
 import React from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { ScrollView, View, Text, RefreshControl } from 'react-native';
 
 import AddEvent from '~/components/AddEvent';
 import { Container } from '~/components/Container';
@@ -13,6 +13,8 @@ export default function Home() {
     data: events,
     isLoading,
     error,
+    refetch,
+    isRefetching,
   } = useQuery({
     queryKey: ['events'],
     queryFn: eventService.get,
@@ -22,7 +24,9 @@ export default function Home() {
     <>
       <Stack.Screen options={{ title: 'Events' }} />
       <Container>
-        <ScrollView className="mt-4">
+        <ScrollView
+          className="mt-4 px-4"
+          refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={refetch} />}>
           {isLoading ? (
             <Text>Loading events...</Text>
           ) : error ? (
@@ -33,7 +37,9 @@ export default function Home() {
             <Text>No events found. Create one to get started!</Text>
           )}
         </ScrollView>
-        <AddEvent />
+        <View className="px-4">
+          <AddEvent />
+        </View>
       </Container>
     </>
   );
