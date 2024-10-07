@@ -3,6 +3,8 @@ import axios from './axios';
 interface Event {
   id?: string;
   name: string;
+  totalAmount?: number;
+  participants?: any[];
 }
 
 const eventService = {
