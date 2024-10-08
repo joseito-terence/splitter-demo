@@ -5,6 +5,8 @@ interface Event {
   name: string;
   totalAmount?: number;
   participants?: any[];
+  isRecurring?: boolean;
+  recurringInterval?: string;
 }
 
 const eventService = {
